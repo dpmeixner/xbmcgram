@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.image.xbmcgram" name="xbmcgram" version="0.1" provider-name="runbos">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.xbmcswift2" version="2.4.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>image</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <language></language>
+    <summary>An Instagram plugin for XBMC</summary>
+    <description>This plugin lets you view Instagram pictures within XBMC. It also can be set as the slideshow using Plugin Slideshow.</description>
+  </extension>
+</addon>

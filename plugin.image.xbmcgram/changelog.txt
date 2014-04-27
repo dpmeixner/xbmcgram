@@ -1,6 +1,10 @@
 xbmcgram Changelog
 
-Current Version: 0.0.1
+Current Version: 0.0.2
+
+** 0.0.2 ***
+
+Added login prompt so that the user does not need to manually update the OAUTH token.
 
 ** 0.0.1 ***
 

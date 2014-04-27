@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
 <strings>
-  <!-- Plugin name -->
-  <string id="30000">xbmcgram</string>
+    <!-- Category strings -->
+
+    <!-- Plugin settings strings -->
+    <string id="30200">Username</string>
+    <string id="30201">Password</string>
+    <string id="30202">Images per page</string>
+    <string id="30203">General</string>
+
+    <!-- Menu strings -->
+
+    <!-- messages -->
+    <string id="30600">Login Success</string>
+    <string id="30601">Login Failed</string>
+
 </strings>

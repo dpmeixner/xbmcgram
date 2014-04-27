@@ -1,3 +1,15 @@
+import os
+import sys
+import xbmc
+import urllib2
+import xbmcaddon
+import cookielib
+import xbmcplugin
+import inspect
+try:
+    import xbmcvfs
+except ImportError:
+    import xbmcvfsdummy as xbmcvfs
 from xbmcswift2 import Plugin
 from resources.lib.instagram.client import InstagramAPI
 from resources.lib import httplib2
@@ -7,13 +19,24 @@ __addon_name__ = 'xbmcgram'
 
 plugin = Plugin(__addon_name__, __addon_id__, __file__)
 
-# Setup the Instagram API
+# xbmc hooks
+settings = xbmcaddon.Addon(id='plugin.image.xbmcgram')
 
+# Setup the Instagram API
 CONFIG = {
-    'access_token': '<INSERT TOKEN HERE BETWEEN QUOTES>'
+    'access_token': settings.getSetting("oauth2_access_token")
 }
 
 api = InstagramAPI(**CONFIG)
+
+# load cookies
+path = xbmc.translatePath(settings.getAddonInfo("profile"))
+path = os.path.join(path, 'instagram-cookiejar.txt')
+print("Loading cookies from :" + repr(path))
+cookiejar = cookielib.LWPCookieJar(path)
+
+cookie_handler = urllib2.HTTPCookieProcessor(cookiejar)
+opener = urllib2.build_opener(cookie_handler)
 
 @plugin.route('/')
 def show_menu():
@@ -53,20 +76,26 @@ def list_images(category, max_id=None):
         fxn = api.location_recent_media
         kwargs["location_id"] = 20724
 
-    kwargs["count"] = 10
+    kwargs["count"] = settings.getSetting("perpage")
     if slideshow:
         kwargs["count"] = 100
     if max_id:
         kwargs["max_id"] = max_id
 
-    media = fxn(**kwargs)
+    try:
+        media = fxn(**kwargs)
+    except:
+        print("InstagramAPIError. Most likely a bad token. Referesh token.")
+        login.login()
+        media = fxn(**kwargs)
+        
     items = get_items(media, category)
 
     return plugin.finish(items)
 
 
 def get_items(media, category):
-    ''' Most requests return &max_id= in the second index so try that first.
+    ''' Most requests return &max_id= in the second index so check that first.
     '''
     try:
         photos = media[0]
@@ -112,5 +141,30 @@ def parse_args(category):
     return (category, slideshow)
 
 if __name__ == '__main__':
+
+    ''' Check if this was called from another application, like the screensaver
+        plugin. If so, don't perform the login step
+    '''
+    try:
+        frm = inspect.stack()[1]
+        slideshow = True
+    except:
+        slideshow = False
+        
+    if not slideshow:
+        import CommonFunctions as common
+        common.plugin = plugin
+        import xbmcgramPluginSettings
+        pluginsettings = xbmcgramPluginSettings.xbmcgramPluginSettings()
+        import xbmcgramLogin
+        login = xbmcgramLogin.xbmcgramLogin()
+
+        if (not settings.getSetting("firstrun")):
+            login.login()
+            settings.setSetting("firstrun", "1")
+        elif (not settings.getSetting("oauth2_access_token")):
+            login.login()
+
     plugin.run()
+
 

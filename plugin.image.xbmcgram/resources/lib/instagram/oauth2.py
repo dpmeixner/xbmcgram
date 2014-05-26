@@ -1,6 +1,6 @@
 import simplejson
 import urllib
-from httplib2 import Http
+from resources.lib.httplib2 import Http
 import mimetypes
 
 

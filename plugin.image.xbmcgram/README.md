@@ -13,3 +13,5 @@ That portion of the code should now look like this:
 		else:
 			ITEMS.append({'url':u.encode('utf-8'),'title':l.getLabel()})
 	return bool
+
+Note: You can hard code your Instagram Access Token in default.py and get it using Client-Side Authentication from http://instagram.com/developer/authentication/
